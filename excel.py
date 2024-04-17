@@ -14,26 +14,39 @@ chromosomes = [[12, 5, 23, 8],
 round_value = 9
 number_chromosomes = 6
 number_genes = 4
+l = 0
 
-for i in range(1):
+while True or l >= 1000:
 
     fx = []
-    fitness = []    
+    fitness = []  
+    m = 0 
 
     for chromosome in chromosomes:
         fx_i = round(((chromosome[0] + (2 * chromosome[1]) + (3 * chromosome[2]) + (4 * chromosome[3])) - 30), round_value)
         fx.append(fx_i)
 
-        fitness_i = round((1 / (1 + fx_i)), round_value)
-        fitness.append(fitness_i)
+        if (1 + fx_i) != 0:
+            fitness_i = round((1 / (1 + fx_i)), round_value)
+            fitness.append(fitness_i)
+    
+    for chromosome in chromosomes:
+        fx_i = round(((chromosome[0] + (2 * chromosome[1]) + (3 * chromosome[2]) + (4 * chromosome[3]))), round_value)
+        if fx_i == 30:
+            m += 1
+    
+    if m == len(chromosomes):
+        print("6/6")
+        break
 
     total = sum(fitness)
     probability = []
     cumulative = []
 
     for fitness_chromosome in fitness:
-        probability_i = round((fitness_chromosome / total), round_value)
-        probability.append(probability_i)
+        if total != 0:
+            probability_i = round((fitness_chromosome / total), round_value)
+            probability.append(probability_i)
     
     cumulative.append(probability[0])
     i = 0
@@ -113,8 +126,10 @@ for i in range(1):
         col = replace_positions[i] % number_genes
         i += 1
 
-        if ren >= 1:
+        if ren >= 1 and ren <= 6:
             ren -= 1
+        elif ren == 7:
+            ren -= 2
 
         if col == 0:
             col = 3
@@ -124,4 +139,5 @@ for i in range(1):
         crossed_chromosomes[ren][col] = value
 
     chromosomes = crossed_chromosomes.copy()
-    print(crossed_chromosomes)
+    print(l, ":",crossed_chromosomes)
+    l += 1
