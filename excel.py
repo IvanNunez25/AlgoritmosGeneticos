@@ -16,11 +16,11 @@ number_chromosomes = 6
 number_genes = 4
 l = 0
 
-while True or l >= 1000:
+while True or l <= 10000:
 
     fx = []
     fitness = []  
-    m = 0 
+    m = 0
 
     for chromosome in chromosomes:
         fx_i = round(((chromosome[0] + (2 * chromosome[1]) + (3 * chromosome[2]) + (4 * chromosome[3])) - 30), round_value)
@@ -34,10 +34,10 @@ while True or l >= 1000:
         fx_i = round(((chromosome[0] + (2 * chromosome[1]) + (3 * chromosome[2]) + (4 * chromosome[3]))), round_value)
         if fx_i == 30:
             m += 1
+
+    if m == 6:
+        break;
     
-    if m == len(chromosomes):
-        print("6/6")
-        break
 
     total = sum(fitness)
     probability = []
@@ -48,7 +48,9 @@ while True or l >= 1000:
             probability_i = round((fitness_chromosome / total), round_value)
             probability.append(probability_i)
     
-    cumulative.append(probability[0])
+    if len(probability) > 0:
+        cumulative.append(probability[0])
+
     i = 0
 
     for i in range(1, len(probability)):
@@ -65,7 +67,9 @@ while True or l >= 1000:
     #for random_number in random_numbers:
         random_number = random.randint(1, 1000) / 1000
         reordered_chromosomes_i = bisect.bisect_right(cumulative, random_number)
-        reordered_chromosomes.append(chromosomes[reordered_chromosomes_i])
+
+        if reordered_chromosomes_i < len(chromosomes):
+            reordered_chromosomes.append(chromosomes[reordered_chromosomes_i])
     
 
     # Volver a sustituir por numeros random
@@ -100,12 +104,13 @@ while True or l >= 1000:
     for position in positions:
         new_line = []
         for i in range(0, number_genes):
-            if i < cut_crossover[j]:
+            if i < cut_crossover[j] and (old_positions[j] - 1) < len(reordered_chromosomes):                
                 new_line.append(reordered_chromosomes[old_positions[j] - 1][i])
-            else:
+            elif position - 1 < len(reordered_chromosomes):
                 new_line.append(reordered_chromosomes[position - 1][i])
             
-        crossed_chromosomes[old_positions[j] - 1] = new_line
+        if old_positions[j] - 1 < len(crossed_chromosomes):
+            crossed_chromosomes[old_positions[j] - 1] = new_line
         j += 1
 
     # random
@@ -136,7 +141,8 @@ while True or l >= 1000:
         else:
             col -= 1
 
-        crossed_chromosomes[ren][col] = value
+        if ren < len(crossed_chromosomes) and col < len(crossed_chromosomes[0]):
+            crossed_chromosomes[ren][col] = value
 
     chromosomes = crossed_chromosomes.copy()
     print(l, ":",crossed_chromosomes)
