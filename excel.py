@@ -36,7 +36,7 @@ while True or l <= 10000:
             m += 1
 
     if m == 6:
-        break;
+        break
     
 
     total = sum(fitness)
