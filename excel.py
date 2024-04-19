@@ -11,12 +11,12 @@ chromosomes = [[12, 5, 23, 8],
               [1, 4, 13, 19],
               [20, 5, 17, 1]]
 
-round_value = 9
+round_value = 6
 number_chromosomes = 6
 number_genes = 4
 l = 0
 
-while True or l <= 10000:
+while len(chromosomes) > 0:
 
     fx = []
     fitness = []  
@@ -26,9 +26,11 @@ while True or l <= 10000:
         fx_i = round(((chromosome[0] + (2 * chromosome[1]) + (3 * chromosome[2]) + (4 * chromosome[3])) - 30), round_value)
         fx.append(fx_i)
 
-        if (1 + fx_i) != 0:
+        if (1 + fx_i) > 0:
             fitness_i = round((1 / (1 + fx_i)), round_value)
             fitness.append(fitness_i)
+        else:
+            fitness.append(0)
     
     for chromosome in chromosomes:
         fx_i = round(((chromosome[0] + (2 * chromosome[1]) + (3 * chromosome[2]) + (4 * chromosome[3]))), round_value)
@@ -65,11 +67,15 @@ while True or l <= 10000:
 
     for i in range (0, number_chromosomes):
     #for random_number in random_numbers:
-        random_number = random.randint(1, 1000) / 1000
+        random_number = random.randint(1, 999) / 1000
         reordered_chromosomes_i = bisect.bisect_right(cumulative, random_number)
 
         if reordered_chromosomes_i < len(chromosomes):
             reordered_chromosomes.append(chromosomes[reordered_chromosomes_i])
+        else:
+            print(f'Reordered: {reordered_chromosomes_i}, Suma: {cumulative}, random: {random_number}')
+            print(f'fit_total: {total}')
+            print(reordered_chromosomes)
     
 
     # Volver a sustituir por numeros random
@@ -111,6 +117,9 @@ while True or l <= 10000:
             
         if old_positions[j] - 1 < len(crossed_chromosomes):
             crossed_chromosomes[old_positions[j] - 1] = new_line
+        else:
+            print(f'old_positions: {old_positions}, j: {j}')
+            print(crossed_chromosomes)
         j += 1
 
     # random
@@ -121,7 +130,7 @@ while True or l <= 10000:
     replace_values = []
 
     
-    for i in range(1, 2):
+    for i in range(0, 2):
         replace_positions.append(random.randint(1, 24))
         replace_values.append(random.randint(1, 30))
     
@@ -141,9 +150,16 @@ while True or l <= 10000:
         else:
             col -= 1
 
-        if ren < len(crossed_chromosomes) and col < len(crossed_chromosomes[0]):
+        if ren < len(crossed_chromosomes) and col < number_genes:
             crossed_chromosomes[ren][col] = value
+        else:
+            print(f'Renglón: {ren}, Columna: {col}')
+            print(f'longitud: {len(crossed_chromosomes)}, l0: {number_genes}')
 
     chromosomes = crossed_chromosomes.copy()
     print(l, ":",crossed_chromosomes)
     l += 1
+
+if len(chromosomes) == 0:
+    print(replace_positions)
+    print(replace_values)
