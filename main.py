@@ -1,5 +1,6 @@
 import pygame
 import random
+import genetica
 
 # Inicialización de pygame
 pygame.init()
@@ -18,7 +19,10 @@ SPECIAL_CELL_POINTS = 5
 
 # Clase para representar a un jugador
 class Player:
-    def __init__(self, color, controls, speed, attack, evasion, accuracy, health_regeneration, velocity_recolection, heal_by_damage, points_increase):
+    def __init__(self, redColor, greenColor, blueColor, color, controls, speed, attack, evasion, accuracy, health_regeneration, velocity_recolection, heal_by_damage, points_increase):
+        self.redColor = redColor
+        self.greenColor = greenColor
+        self.blueColor = blueColor
         self.color = color
         self.controls = controls
         self.x = random.randint(0, WIDTH - 1)
@@ -55,31 +59,37 @@ class Player:
                 print(f"{self.color} missed the attack!")
 
 # Inicialización de jugadores
-player1_attributes = {
-    'color': GREEN,
-    'controls': {'up': pygame.K_w, 'down': pygame.K_s, 'left': pygame.K_a, 'right': pygame.K_d},
-    'speed': 1,
-    'attack': 10,
-    'evasion': 0.1,
-    'accuracy': 0.8,
-    'health_regeneration': 2,
-    'velocity_recolection': 1,
-    'heal_by_damage': 2,
-    'points_increase': 2
-}
+# player1_attributes = {
+#     'color': GREEN,
+#     'controls': {'up': pygame.K_w, 'down': pygame.K_s, 'left': pygame.K_a, 'right': pygame.K_d},
+#     'speed': 1,
+#     'attack': 10,
+#     'evasion': 0.1,
+#     'accuracy': 0.8,
+#     'health_regeneration': 2,
+#     'velocity_recolection': 1,
+#     'heal_by_damage': 2,
+#     'points_increase': 2
+# }
 
-player2_attributes = {
-    'color': BLUE,
-    'controls': {'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT, 'right': pygame.K_RIGHT},
-    'speed': 1,
-    'attack': 10,
-    'evasion': 0.1,
-    'accuracy': 0.8,
-    'health_regeneration': 2,
-    'velocity_recolection': 1,
-    'heal_by_damage': 2,
-    'points_increase': 2
-}
+# player2_attributes = {
+#     'color': BLUE,
+#     'controls': {'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT, 'right': pygame.K_RIGHT},
+#     'speed': 1,
+#     'attack': 10,
+#     'evasion': 0.1,
+#     'accuracy': 0.8,
+#     'health_regeneration': 2,
+#     'velocity_recolection': 1,
+#     'heal_by_damage': 2,
+#     'points_increase': 2
+# }
+
+player1_attributes = genetica.personajeInicial()
+player1_attributes['controls'] = {'up': pygame.K_w, 'down': pygame.K_s, 'left': pygame.K_a, 'right': pygame.K_d}
+
+player2_attributes = genetica.personajeInicial()
+player2_attributes['controls'] = {'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT, 'right': pygame.K_RIGHT}
 
 player1 = Player(**player1_attributes)
 player2 = Player(**player2_attributes)
@@ -95,7 +105,7 @@ def draw_map(screen):
     screen.fill(WHITE)
     for x in range(WIDTH):
         for y in range(HEIGHT):
-            color = GREEN if (x, y) == (player1.x, player1.y) else BLUE if (x, y) == (player2.x, player2.y) else WHITE
+            color = player1.color if (x, y) == (player1.x, player1.y) else player2.color if (x, y) == (player2.x, player2.y) else WHITE
             pygame.draw.rect(screen, color, (x * 10, y * 10, 10, 10))
     for cell in special_cells:
         pygame.draw.rect(screen, (255, 165, 0), (cell['position'][0] * 10, cell['position'][1] * 10, 10, 10))
