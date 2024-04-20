@@ -55,6 +55,7 @@ class Player:
                 print(f"{self.color} missed the attack!")
 
 # Inicialización de jugadores
+
 player1_attributes = {
     'color': GREEN,
     'controls': {'up': pygame.K_w, 'down': pygame.K_s, 'left': pygame.K_a, 'right': pygame.K_d},
@@ -83,6 +84,28 @@ player2_attributes = {
 
 player1 = Player(**player1_attributes)
 player2 = Player(**player2_attributes)
+
+
+##################################LO NUEVOOO
+players={player1,player2}
+
+
+'''
+lo de players es el conjunto pero para usarlo mas facil lo converti en lista
+'''
+players_list = list(players)
+
+# Acceder al segundo jugador (player2)
+second_player = players_list[1]
+
+# Acceder a los atributos del segundo jugador
+print("Color del segundo jugador:", second_player.color)
+print("Controles del segundo jugador:", second_player.controls)
+print("Velocidad del segundo jugador:", second_player.speed)
+##aqui se termina la muestraaaaaaaaaaaaaaaaaa
+
+
+
 
 # Creación de las casillas especiales
 special_cells = []
