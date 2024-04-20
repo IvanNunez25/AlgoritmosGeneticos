@@ -3,7 +3,6 @@ import random
 import genetica
 
 # Inicialización de pygame
-pygame.init()
 
 # Definición de colores
 WHITE = (255, 255, 255)
@@ -105,12 +104,19 @@ lo de players es el conjunto pero para usarlo mas facil lo converti en lista
 players_list = list(players)
 
 # Acceder al segundo jugador (player2)
-second_player = players_list[1]
+# second_player = players_list[1]
+
+for player in players_list:
+    print("color: ", player.color)
+    print("controles: ", player.controls)
+    print("velocidad: ", player.speed)
+    print('\n')
+
 
 # Acceder a los atributos del segundo jugador
-print("Color del segundo jugador:", second_player.color)
-print("Controles del segundo jugador:", second_player.controls)
-print("Velocidad del segundo jugador:", second_player.speed)
+# print("Color del segundo jugador:", second_player.color)
+# print("Controles del segundo jugador:", second_player.controls)
+# print("Velocidad del segundo jugador:", second_player.speed)
 ##aqui se termina la muestraaaaaaaaaaaaaaaaaa
 
 
@@ -177,6 +183,8 @@ def check_special_cells(player):
 
 # Función principal del juego
 def main():
+    
+    # pygame.init()
     screen = pygame.display.set_mode(SCREEN_SIZE)
     clock = pygame.time.Clock()
     running = True
@@ -189,19 +197,31 @@ def main():
         handle_events()
 
         check_collisions()
-        check_special_cells(player1)
-        check_special_cells(player2)
+        for player in players_list:
+            check_special_cells(player)
+        
+        # check_special_cells(player2)
 
         # Regeneración de salud
-        player1.health = min(player1.health + player1.health_regeneration, player1.max_health)
-        player2.health = min(player2.health + player2.health_regeneration, player2.max_health)
+        # player1.health = min(player1.health + player1.health_regeneration, player1.max_health)
+        # player2.health = min(player2.health + player2.health_regeneration, player2.max_health)
+        
+        # Iterar sobre la lista de jugadores
+        for player in players_list:
+            # Incrementar la salud y asegurarse de que no supere la salud máxima
+            player.health = min(player.health + player.health_regeneration, player.max_health)
+
 
         draw_map(screen)
         pygame.display.flip()
         clock.tick(10)
 
         # Verificar si ambos jugadores están "fuera de combate"
-        if not player1.is_alive and not player2.is_alive:
+        # if not player1.is_alive and not player2.is_alive:
+        #     running = False
+
+        # Verificar si todos los jugadores están "fuera de combate"
+        if all(not player.is_alive for player in players_list):
             running = False
 
         # Verificar si ya no quedan celdas especiales
@@ -209,11 +229,36 @@ def main():
             running = False
 
     # Mostrar puntuación final y estado de los jugadores
-    print("Resultado:")
-    print(f"Jugador 1 (verde): {player1.score} puntos, {'Fuera de combate' if not player1.is_alive else 'Salud: ' + str(player1.health)}")
-    print(f"Jugador 2 (azul): {player2.score} puntos, {'Fuera de combate' if not player2.is_alive else 'Salud: ' + str(player2.health)}")
+    # print("Resultado:")
+    # print(f"Jugador 1 (verde): {player1.score} puntos, {'Fuera de combate' if not player1.is_alive else 'Salud: ' + str(player1.health)}")
+    # print(f"Jugador 2 (azul): {player2.score} puntos, {'Fuera de combate' if not player2.is_alive else 'Salud: ' + str(player2.health)}")
+    
+    
 
-    pygame.quit()
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
+
+#
+#
+#
+#
+#
+#
+# !!!!! IMPORTANTE 
+# Ajustar la ventana para que se repita cuando se acaban los objetivos -----
+
+# while len(players_list) > 0:
+#     main()        
+    
+#     pygame.init()
+#     players_list.pop()
+    
+#     genetica.round(players_list)
+    
+#     for player in players_list:
+#         player.is_alive = True
+    
+# pygame.quit()
+
+genetica.round_genetica(players_list)
