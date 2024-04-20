@@ -18,31 +18,71 @@ SPECIAL_CELL_POINTS = 5
 
 # Clase para representar a un jugador
 class Player:
-    def __init__(self, color, controls, attack,health):
+    def __init__(self, color, controls, speed, attack, evasion, accuracy, health_regeneration, velocity_recolection, heal_by_damage, points_increase):
         self.color = color
         self.controls = controls
         self.x = random.randint(0, WIDTH - 1)
         self.y = random.randint(0, HEIGHT - 1)
         self.score = 0
+        self.speed = speed
         self.attack = attack
-        self.health = health
+        self.evasion = evasion
+        self.accuracy = accuracy
+        self.health = 100
+        self.max_health = 100
+        self.health_regeneration = health_regeneration
+        self.velocity_recolection = velocity_recolection
+        self.heal_by_damage = heal_by_damage
+        self.points_increase = points_increase
         self.is_alive = True
 
     def move(self, dx, dy):
         if self.is_alive:
-            self.x += dx
-            self.y += dy
+            self.x += dx * self.speed
+            self.y += dy * self.speed
             self.x = max(0, min(WIDTH - 1, self.x))
             self.y = max(0, min(HEIGHT - 1, self.y))
 
-# Inicialización de jugadores
-attack1=15
-attack2=10
-health1=100
-health2=200
+    def attack_enemy(self, enemy):
+        if self.is_alive and enemy.is_alive:
+            if random.random() < self.accuracy:
+                enemy.health -= self.attack
+                self.health += self.heal_by_damage
+                self.health = min(self.health, self.max_health)
+                if enemy.health <= 0:
+                    enemy.is_alive = False
+            else:
+                print(f"{self.color} missed the attack!")
 
-player1 = Player(GREEN, {'up': pygame.K_w, 'down': pygame.K_s, 'left': pygame.K_a, 'right': pygame.K_d},attack1, health1)
-player2 = Player(BLUE, {'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT, 'right': pygame.K_RIGHT}, attack2, health2)
+# Inicialización de jugadores
+player1_attributes = {
+    'color': GREEN,
+    'controls': {'up': pygame.K_w, 'down': pygame.K_s, 'left': pygame.K_a, 'right': pygame.K_d},
+    'speed': 1,
+    'attack': 10,
+    'evasion': 0.1,
+    'accuracy': 0.8,
+    'health_regeneration': 2,
+    'velocity_recolection': 1,
+    'heal_by_damage': 2,
+    'points_increase': 2
+}
+
+player2_attributes = {
+    'color': BLUE,
+    'controls': {'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT, 'right': pygame.K_RIGHT},
+    'speed': 1,
+    'attack': 10,
+    'evasion': 0.1,
+    'accuracy': 0.8,
+    'health_regeneration': 2,
+    'velocity_recolection': 1,
+    'heal_by_damage': 2,
+    'points_increase': 2
+}
+
+player1 = Player(**player1_attributes)
+player2 = Player(**player2_attributes)
 
 # Creación de las casillas especiales
 special_cells = []
@@ -90,20 +130,15 @@ def handle_events():
 # Función para verificar colisiones y atacar
 def check_collisions():
     if player1.x == player2.x and player1.y == player2.y:
-        if player1.is_alive and player2.is_alive:
-            player1.health -= player2.attack
-            player2.health -= player1.attack
-        if player1.health <= 0:
-            player1.is_alive = False
-        if player2.health <= 0:
-            player2.is_alive = False
+        player1.attack_enemy(player2)
+        player2.attack_enemy(player1)
 
 # Función para verificar si un jugador está en una casilla especial
 def check_special_cells(player):
     for cell in special_cells:
         if (player.x, player.y) == cell['position']:
             if player.is_alive:
-                player.score += 1
+                player.score += player.points_increase
                 cell['points'] -= 1
                 if cell['points'] == 0:
                     special_cells.remove(cell)
@@ -124,6 +159,10 @@ def main():
         check_collisions()
         check_special_cells(player1)
         check_special_cells(player2)
+
+        # Regeneración de salud
+        player1.health = min(player1.health + player1.health_regeneration, player1.max_health)
+        player2.health = min(player2.health + player2.health_regeneration, player2.max_health)
 
         draw_map(screen)
         pygame.display.flip()
