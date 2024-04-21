@@ -16,7 +16,7 @@ SCREEN_SIZE = (WIDTH * 10 + 100, HEIGHT * 10)  # Aumentamos el ancho de la panta
 SPECIAL_CELL_COUNT = 5
 SPECIAL_CELL_POINTS = 5
 
-number_players = 10
+number_players = 3
 genetica.total_players = number_players
 
 # Clase para representar a un jugador
