@@ -23,7 +23,7 @@ import math
 
 genes = [(0, 255), (0, 255), (0, 255), (1, 10), (10, 50), (0, 100), (0, 100), (1, 10), (1, 10), (1, 5), (1, 5)]
 
-total_players = 2
+total_players = 0
 total_genes = len(genes) 
 round_value = 6
 total_changes = math.floor(0.1 * total_genes * total_players)
@@ -55,7 +55,10 @@ def personajeInicial():
 
 def round_genetica(players_list):
     
-    new_players_list = players_list.copy()
+    new_players_list = datos(players_list)
+    print("Antes")
+    for p in new_players_list:
+        print(p)
     
     fitness = fitness_function(players_list)
     total = round(sum(fitness), round_value)
@@ -86,8 +89,31 @@ def round_genetica(players_list):
     replace_function(replace_positions, replace_values)
     replace_values_function(replace_positions, replace_values, crossed_players)
     
+    print("Despues")
+    for p in crossed_players:
+        print(p)
+    
     return crossed_players.copy()
 
+def datos(players):
+    players_list = []
+    for player in players:
+        player_row = []
+        player_row.append(player.redColor)
+        player_row.append(player.greenColor)
+        player_row.append(player.blueColor)
+        player_row.append(player.speed)
+        player_row.append(player.attack)
+        player_row.append(player.evasion)
+        player_row.append(player.accuracy)
+        player_row.append(player.health_regeneration)
+        player_row.append(player.velocity_recolection)
+        player_row.append(player.heal_by_damage)
+        player_row.append(player.points_increase)
+        
+        players_list.append(player_row)
+        
+    return players_list 
 
 def fitness_function(players):
     fitness = []
@@ -145,7 +171,7 @@ def crossed_players_function(crossed_players, positions, cut_crossover, old_posi
         
         for i in range(0, total_genes):
             if i < cut_crossover[j] and (old_positions[j] - 1) < len(reordered_players):
-                new_player.append( reordered_players[old_positions[j] - 1] )
+                new_player.append( reordered_players[old_positions[j] - 1][i] )
             elif position - 1 < len(reordered_players):
                 new_player.append( reordered_players[position - 1][i])
             
