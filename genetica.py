@@ -56,9 +56,6 @@ def personajeInicial():
 def round_genetica(players_list):
     
     new_players_list = datos(players_list)
-    print("Antes")
-    for p in new_players_list:
-        print(p)
     
     fitness = fitness_function(players_list)
     total = round(sum(fitness), round_value)
@@ -89,9 +86,7 @@ def round_genetica(players_list):
     replace_function(replace_positions, replace_values)
     replace_values_function(replace_positions, replace_values, crossed_players)
     
-    print("Despues")
-    for p in crossed_players:
-        print(p)
+    print(crossed_players)
     
     return crossed_players.copy()
 
@@ -161,7 +156,7 @@ def cut_crossover_function(cut_crossover, positions, total_players):
     for rand in random_numbers:
         if rand <= 0.250:
             positions.append( (random_numbers.index(rand)) + 1 )
-            cut_crossover.append( random.randint(1, total_players - 1) )
+            cut_crossover.append( random.randint(1, total_genes - 1) )
 
 def crossed_players_function(crossed_players, positions, cut_crossover, old_positions, reordered_players):
     j = 0
@@ -187,11 +182,11 @@ def replace_function(replace_positions, replace_values):
         value = 0
         match position % total_genes:
             case 0, 1, 2: value = random.randint(0, 255)
-            case 4: value = random.randint(1, 10)
-            case 5: value = random.randint(10, 50)
-            case 6, 7: value = random.randint(1, 99) / 100
-            case 8, 9: value = random.randint(1, 10)
-            case 10, 11: value = random.randint(1, 5)
+            case 3: value = random.randint(1, 10)
+            case 4: value = random.randint(10, 50)
+            case 5, 6: value = random.randint(1, 99) / 100
+            case 7, 8: value = random.randint(1, 10)
+            case 9, 10: value = random.randint(1, 5)
         
         replace_values.append(value)
             
