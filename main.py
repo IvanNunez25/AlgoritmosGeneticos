@@ -16,7 +16,8 @@ SCREEN_SIZE = (WIDTH * 10 + 100, HEIGHT * 10)  # Aumentamos el ancho de la panta
 SPECIAL_CELL_COUNT = 5
 SPECIAL_CELL_POINTS = 5
 
-number_players=2
+number_players = 10
+genetica.total_players = number_players
 
 # Clase para representar a un jugador
 class Player:
@@ -78,11 +79,13 @@ for player in players_list:
 
 
 # Creación de las casillas especiales
-special_cells = []
-for _ in range(SPECIAL_CELL_COUNT):
-    cell = {'position': (random.randint(0, WIDTH - 1), random.randint(0, HEIGHT - 1)), 'points': SPECIAL_CELL_POINTS}
-    special_cells.append(cell)
+def casillas_especiales():
+    for _ in range(SPECIAL_CELL_COUNT):
+        cell = {'position': (random.randint(0, WIDTH - 1), random.randint(0, HEIGHT - 1)), 'points': SPECIAL_CELL_POINTS}
+        special_cells.append(cell)
 
+special_cells = []
+casillas_especiales()
 
 
 # Función para dibujar el mapa
@@ -173,7 +176,26 @@ def main():
 
         # Verificar si ya no quedan celdas especiales
         if not special_cells:
-            running = False
+            # running = False
+            datos = genetica.round_genetica(players_list)
+            for i in range(0, len(players_list)):     
+                players_list[i].redColor = datos[i][0]
+                players_list[i].greenColor = datos[i][1]
+                players_list[i].blueColor = datos[i][2]
+                players_list[i].color = (datos[i][0], datos[i][1], datos[i][2])
+                players_list[i].speed = datos[i][3]
+                players_list[i].attack = datos[i][4]
+                players_list[i].evasion = datos[i][5]
+                players_list[i].accuracy = datos[i][6]
+                players_list[i].health_regeneration = datos[i][7]
+                players_list[i].velocity_recolection = datos[i][8]
+                players_list[i].heal_by_damage = datos[i][9]
+                players_list[i].points_increase = datos[i][10]
+                
+            casillas_especiales()
+
+    
+    
 
     pygame.quit()
     
