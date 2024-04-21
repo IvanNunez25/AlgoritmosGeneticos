@@ -43,27 +43,29 @@ def get_path(special_cells, player):
     # Generar el camino hacia el punto más cercano
     x_nearest, y_nearest = nearest_cell['position']
     path = []
-    # dx = x_nearest - x_player
-    # dy = y_nearest - y_player
     
-    while (x_nearest != x_player) and (y_nearest != y_player):  # Usamos 'or' en lugar de 'and'
+    while (x_nearest != x_player) or (y_nearest != y_player):
         # Recalcular las diferencias de coordenadas
-        dx = x_nearest - player.x
-        dy = y_nearest - player.y
+        dx = x_nearest - x_player
+        dy = y_nearest - y_player
         
         # Añadir la dirección tomada al camino
         if abs(dx) > abs(dy):
             # Mover en el eje x
             if dx > 0:
                 path.append(3)  # Derecha
+                x_player += 1
             else:
                 path.append(2)  # Izquierda
+                x_player -= 1
         else:
             # Mover en el eje y
             if dy > 0:
                 path.append(1)  # Abajo
+                y_player += 1
             else:
                 path.append(0)  # Arriba
+                y_player -= 1
 
     
     return path

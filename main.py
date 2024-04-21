@@ -2,6 +2,7 @@ import pygame
 import random
 import genetica
 import caminos
+import concurrent.futures
 
 # Inicialización de pygame
 
@@ -175,8 +176,12 @@ def main():
 
         check_collisions()
         
-        for player in players_list:
-            player.step()
+        # for player in players_list:
+        #     player.step()
+        
+        # Ejecutar player.step() en paralelo
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            executor.map(Player.step, players_list)
         
         for player in players_list:
             player.health = min(player.health + player.health_regeneration, player.max_health)
