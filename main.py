@@ -16,6 +16,8 @@ SCREEN_SIZE = (WIDTH * 10 + 100, HEIGHT * 10)  # Aumentamos el ancho de la panta
 SPECIAL_CELL_COUNT = 5
 SPECIAL_CELL_POINTS = 5
 
+number_players=2
+
 # Clase para representar a un jugador
 class Player:
     def __init__(self, redColor, greenColor, blueColor, color, controls, speed, attack, evasion, accuracy, health_regeneration, velocity_recolection, heal_by_damage, points_increase):
@@ -60,7 +62,7 @@ class Player:
 
 # Inicialización de jugadores
 players_list = []
-for _ in range(2):  # Aquí puedes cambiar el número de jugadores
+for _ in range(number_players):  # Aquí puedes cambiar el número de jugadores
     player_attributes = genetica.personajeInicial()
     controls = {'up': pygame.K_w, 'down': pygame.K_s, 'left': pygame.K_a, 'right': pygame.K_d} if len(players_list) == 0 else {'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT, 'right': pygame.K_RIGHT}
     player_attributes['controls'] = controls
