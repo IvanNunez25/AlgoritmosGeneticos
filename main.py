@@ -1,6 +1,7 @@
 import pygame
 import random
 import genetica
+import caminos
 
 # Inicialización de pygame
 
@@ -41,6 +42,7 @@ class Player:
         self.heal_by_damage = heal_by_damage
         self.points_increase = points_increase
         self.is_alive = True
+        self.path = []
 
     def move(self, dx, dy):
         if self.is_alive:
@@ -48,7 +50,21 @@ class Player:
             self.y += dy * self.speed
             self.x = max(0, min(WIDTH - 1, self.x))
             self.y = max(0, min(HEIGHT - 1, self.y))
+            
+            pygame.display.flip()
+            
+    def step(self):
+        for _ in range(0, self.velocity_recolection):
+            if len(self.path) > 0:
+                match self.path[0]:
+                    case 0: player.move(0, -1)
+                    case 1: player.move(0, 1)
+                    case 2: player.move(-1, 0)
+                    case 3: player.move(1, 0) 
 
+                check_special_cells(self)
+                self.path.pop(0)
+            
     def attack_enemy(self, enemy):
         if self.is_alive and enemy.is_alive:
             if random.random() < self.accuracy:
@@ -59,7 +75,6 @@ class Player:
                     enemy.is_alive = False
             else:
                 print(f"{self.color} missed the attack!")
-
 
 # Inicialización de jugadores
 players_list = []
@@ -159,9 +174,9 @@ def main():
         handle_events()
 
         check_collisions()
-
+        
         for player in players_list:
-            check_special_cells(player)
+            player.step()
         
         for player in players_list:
             player.health = min(player.health + player.health_regeneration, player.max_health)
@@ -176,7 +191,6 @@ def main():
 
         # Verificar si ya no quedan celdas especiales
         if not special_cells:
-            # running = False
             datos = genetica.round_genetica(players_list)
             for i in range(0, len(players_list)):     
                 players_list[i].redColor = datos[i][0]
@@ -192,38 +206,16 @@ def main():
                 players_list[i].heal_by_damage = datos[i][9]
                 players_list[i].points_increase = datos[i][10]
                 
-            casillas_especiales()
-
-    
-    
+            casillas_especiales() 
+            for player in players_list:
+                player.path = caminos.get_path(special_cells, player)
 
     pygame.quit()
     
 
 
 if __name__ == "__main__":
-     main()
+    for player in players_list:
+        player.path = caminos.get_path(special_cells, player)
+    main()
 
-#
-#
-#
-#
-#
-#
-# !!!!! IMPORTANTE 
-# Ajustar la ventana para que se repita cuando se acaban los objetivos -----
-
-# while len(players_list) > 0:
-#     main()        
-    
-#     pygame.init()
-#     players_list.pop()
-    
-#     genetica.round(players_list)
-    
-#     for player in players_list:
-#         player.is_alive = True
-    
-# pygame.quit()
-
-#genetica.round_genetica(players_list)

@@ -15,13 +15,13 @@ import math
                  evasion:   0.0 - 1.0
                 accuracy:   0.0 - 1.0
      health_regeneration:   1 - 10
-    velocity_recolection:   1 - 10
+    velocity_recolection:   1 - 5
           heal_by_damage:   1 - 5
          points_increase:   1 - 5
 
 '''
 
-genes = [(0, 255), (0, 255), (0, 255), (1, 10), (10, 50), (0, 100), (0, 100), (1, 10), (1, 10), (1, 5), (1, 5)]
+genes = [(0, 255), (0, 255), (0, 255), (1, 10), (10, 50), (0, 100), (0, 100), (1, 10), (1, 5), (1, 5), (1, 5)]
 
 total_players = 0
 total_genes = len(genes) 
@@ -185,8 +185,8 @@ def replace_function(replace_positions, replace_values):
             case 3: value = random.randint(1, 10)
             case 4: value = random.randint(10, 50)
             case 5, 6: value = random.randint(1, 99) / 100
-            case 7, 8: value = random.randint(1, 10)
-            case 9, 10: value = random.randint(1, 5)
+            case 7: value = random.randint(1, 10)
+            case 8, 9, 10: value = random.randint(1, 5)
         
         replace_values.append(value)
             
