@@ -1,7 +1,6 @@
 import pygame
 import random
 import genetica
-import caminos
 import time
 
 # Inicialización de pygame
@@ -21,12 +20,14 @@ SCREEN_SIZE = (WIDTH * 10 + TEXT_WIDTH, HEIGHT * 10)
 SPECIAL_CELL_COUNT = 10
 SPECIAL_CELL_POINTS = 1
 
-number_players = 70
+number_players = 40
 genetica.total_players = number_players
 
 # Clase para representar a un jugador
 class Player:
+    # Constructor de la clase Player
     def __init__(self, redColor, greenColor, blueColor, color, controls, speed, attack, evasion, accuracy, health_regeneration, velocity_recolection, heal_by_damage, points_increase):
+        # Inicialización de los atributos del jugador
         self.redColor = redColor
         self.greenColor = greenColor
         self.blueColor = blueColor
@@ -48,6 +49,7 @@ class Player:
         self.is_alive = True
         self.path = []
 
+    # Método para mover al jugador en el mapa
     def move(self, dx, dy):
         if self.is_alive:
             self.x += dx * self.speed
@@ -55,6 +57,7 @@ class Player:
             self.x = max(0, min(WIDTH - 1, self.x))
             self.y = max(0, min(HEIGHT - 1, self.y))
 
+    # Método para avanzar un paso en una dirección aleatoria
     def step(self):
         # Mueve al azar en una dirección
         move_direction = random.randint(0, 3)
@@ -67,6 +70,7 @@ class Player:
         elif move_direction == 3:
             self.move(1, 0)
 
+    # Método para que el jugador ataque a otro jugador
     def attack_enemy(self, enemy):
         if self.is_alive and enemy.is_alive:
             if random.random() < self.accuracy:
@@ -79,25 +83,31 @@ class Player:
 # Inicialización de jugadores
 players_list = []
 for _ in range(number_players):  # Aquí puedes cambiar el número de jugadores
+    # Generar atributos aleatorios para cada jugador
     player_attributes = genetica.personajeInicial()
+    # Asignar controles a los jugadores (los primeros tienen controles diferentes)
     controls = {'up': pygame.K_w, 'down': pygame.K_s, 'left': pygame.K_a, 'right': pygame.K_d} if len(players_list) == 0 else {'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT, 'right': pygame.K_RIGHT}
     player_attributes['controls'] = controls
+    # Crear instancia del jugador con los atributos generados
     player = Player(**player_attributes)
+    # Agregar el jugador a la lista de jugadores
     players_list.append(player)
 
-# Creación de las casillas especiales
+# Función para generar casillas especiales en el campo de juego
 def casillas_especiales():
     for _ in range(SPECIAL_CELL_COUNT):
         cell = {'position': (random.randint(0, WIDTH - 1), random.randint(0, HEIGHT - 1)), 'points': SPECIAL_CELL_POINTS}
         special_cells.append(cell)
 
+# Lista para almacenar las casillas especiales en el campo de juego
 special_cells = []
+# Generar casillas especiales al inicio del juego
 casillas_especiales()
 
-# Función para dibujar el mapa
+# Función para dibujar el mapa en la pantalla
 def draw_map(screen, players_alive, special_cells_left, generations_passed):
     screen.fill(WHITE)
-
+    
     # Dibujar campo de juego
     for x in range(WIDTH):
         for y in range(HEIGHT):
@@ -106,11 +116,15 @@ def draw_map(screen, players_alive, special_cells_left, generations_passed):
                 if (x, y) == (player.x, player.y) and player.is_alive:
                     color = player.color
             pygame.draw.rect(screen, color, (x * 10, y * 10, 10, 10))
+            
+    # Dibujar casillas especiales
+    for cell in special_cells:
+        pygame.draw.rect(screen, (255, 165, 0), (cell['position'][0] * 10, cell['position'][1] * 10, 10, 10))
 
     # Dibujar línea vertical divisoria
     pygame.draw.line(screen, BLACK, ((WIDTH * 10), 0), ((WIDTH * 10), SCREEN_SIZE[1]), 2)
 
-    # Dibujar contadores
+    # Dibujar contadores de jugadores y casillas especiales
     font = pygame.font.SysFont(None, 24)
     players_alive_text = font.render("Jugadores vivos: {}".format(players_alive), True, BLACK)
     special_cells_text = font.render("Madera faltante: {}".format(special_cells_left), True, BLACK)
@@ -119,7 +133,7 @@ def draw_map(screen, players_alive, special_cells_left, generations_passed):
     screen.blit(special_cells_text, (WIDTH * 10 + 10, 40))
     screen.blit(generations_text, (WIDTH * 10 + 10, 70))
 
-# Función para manejar eventos
+# Función para manejar eventos del juego
 def handle_events():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -136,7 +150,7 @@ def handle_events():
         if keys[player.controls['right']]:
             player.move(1, 0)
 
-# Función para verificar colisiones y atacar
+# Función para verificar colisiones y realizar ataques entre jugadores
 def check_collisions():
     for i, player in enumerate(players_list):
         if player.is_alive:
@@ -145,7 +159,7 @@ def check_collisions():
                     player.attack_enemy(other_player)
                     other_player.attack_enemy(player)
 
-# Función para verificar si un jugador está en una casilla especial
+# Función para verificar si un jugador está en una casilla especial y actualizar su puntuación
 def check_special_cells(player):
     for cell in special_cells:
         if (player.x, player.y) == cell['position']:
@@ -178,9 +192,10 @@ def main():
         for player in players_list:
             player.health = min(player.health + player.health_regeneration, player.max_health)
 
+        # Dibujar el mapa y actualizar la pantalla
         draw_map(screen, count_players_alive(), len(special_cells), generations_passed)
         pygame.display.flip()
-        clock.tick(20)
+        clock.tick(30)
 
         # Verificar si todos los jugadores están "fuera de combate"
         if all(not player.is_alive for player in players_list):
@@ -188,9 +203,12 @@ def main():
 
         # Verificar si ya no quedan celdas especiales
         if not special_cells:
+            # Esperar unos segundos antes de continuar
             time.sleep(3)
+            # Realizar una nueva generación de jugadores
             datos = genetica.round_genetica(players_list)
             for i in range(0, len(players_list)):
+                # Actualizar los atributos de los jugadores con los datos de la nueva generación
                 players_list[i].redColor = datos[i][0]
                 players_list[i].greenColor = datos[i][1]
                 players_list[i].blueColor = datos[i][2]
@@ -204,14 +222,15 @@ def main():
                 players_list[i].heal_by_damage = datos[i][9]
                 players_list[i].points_increase = datos[i][10]
 
+            # Generar nuevas casillas especiales
             casillas_especiales()
-            for player in players_list:
-                player.path = caminos.get_path(special_cells, player)
 
+            # Incrementar el contador de generaciones
             generations_passed += 1
 
     pygame.quit()
 
+# Función para contar el número de jugadores vivos
 def count_players_alive():
     count = 0
     for player in players_list:
@@ -220,6 +239,4 @@ def count_players_alive():
     return count
 
 if __name__ == "__main__":
-    for player in players_list:
-        player.path = caminos.get_path(special_cells, player)
     main()
