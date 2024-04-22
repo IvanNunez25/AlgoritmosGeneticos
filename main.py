@@ -15,10 +15,10 @@ RED = (255, 0, 0)
 # Definición del tamaño de la pantalla y otros parámetros
 WIDTH, HEIGHT = 50, 50
 SCREEN_SIZE = (WIDTH * 10 + 100, HEIGHT * 10)  # Aumentamos el ancho de la pantalla para mostrar la salud
-SPECIAL_CELL_COUNT = 1000
+SPECIAL_CELL_COUNT = 10
 SPECIAL_CELL_POINTS = 1
 
-number_players = 100
+number_players = 70
 genetica.total_players = number_players
 
 # Clase para representar a un jugador
@@ -190,7 +190,7 @@ def main():
 
         draw_map(screen)
         pygame.display.flip()
-        clock.tick(10)
+        clock.tick(20)
 
         # Verificar si todos los jugadores están "fuera de combate"
         if all(not player.is_alive for player in players_list):
