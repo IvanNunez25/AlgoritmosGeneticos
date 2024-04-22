@@ -1,7 +1,6 @@
 import pygame
 import random
 import genetica
-import caminos
 import time
 
 # Inicialización de pygame
@@ -21,7 +20,7 @@ SCREEN_SIZE = (WIDTH * 10 + TEXT_WIDTH, HEIGHT * 10)
 SPECIAL_CELL_COUNT = 10
 SPECIAL_CELL_POINTS = 1
 
-number_players = 70
+number_players = 40
 genetica.total_players = number_players
 
 # Clase para representar a un jugador
@@ -97,7 +96,7 @@ casillas_especiales()
 # Función para dibujar el mapa
 def draw_map(screen, players_alive, special_cells_left, generations_passed):
     screen.fill(WHITE)
-
+    
     # Dibujar campo de juego
     for x in range(WIDTH):
         for y in range(HEIGHT):
@@ -106,6 +105,11 @@ def draw_map(screen, players_alive, special_cells_left, generations_passed):
                 if (x, y) == (player.x, player.y) and player.is_alive:
                     color = player.color
             pygame.draw.rect(screen, color, (x * 10, y * 10, 10, 10))
+            
+    
+    for cell in special_cells:
+        pygame.draw.rect(screen, (255, 165, 0), (cell['position'][0] * 10, cell['position'][1] * 10, 10, 10))
+
 
     # Dibujar línea vertical divisoria
     pygame.draw.line(screen, BLACK, ((WIDTH * 10), 0), ((WIDTH * 10), SCREEN_SIZE[1]), 2)
@@ -180,7 +184,7 @@ def main():
 
         draw_map(screen, count_players_alive(), len(special_cells), generations_passed)
         pygame.display.flip()
-        clock.tick(20)
+        clock.tick(30)
 
         # Verificar si todos los jugadores están "fuera de combate"
         if all(not player.is_alive for player in players_list):
@@ -205,8 +209,6 @@ def main():
                 players_list[i].points_increase = datos[i][10]
 
             casillas_especiales()
-            for player in players_list:
-                player.path = caminos.get_path(special_cells, player)
 
             generations_passed += 1
 
@@ -220,6 +222,4 @@ def count_players_alive():
     return count
 
 if __name__ == "__main__":
-    for player in players_list:
-        player.path = caminos.get_path(special_cells, player)
     main()
