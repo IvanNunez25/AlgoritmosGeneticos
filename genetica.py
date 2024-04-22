@@ -86,8 +86,7 @@ def round_genetica(players_list):
     replace_function(replace_positions, replace_values)
     replace_values_function(replace_positions, replace_values, crossed_players)
     
-    print(crossed_players)
-    
+    print(crossed_players[:][3])
     return crossed_players.copy()
 
 def datos(players):
@@ -169,9 +168,12 @@ def crossed_players_function(crossed_players, positions, cut_crossover, old_posi
                 new_player.append( reordered_players[old_positions[j] - 1][i] )
             elif position - 1 < len(reordered_players):
                 new_player.append( reordered_players[position - 1][i])
-            
-        crossed_players[old_positions[j]] = new_player
-        j += 1
+        
+        if old_positions[j] - 1 < len(crossed_players):
+            crossed_players[old_positions[j] - 1] = new_player
+        j += 1    
+        
+        
 
 def replace_function(replace_positions, replace_values):
     total_changes = math.floor(0.1 * total_genes * total_players)
@@ -207,7 +209,7 @@ def replace_values_function(replace_positions, replace_values, crossed_players):
             ren -= 1
         
         if col == 0:
-            col += total_genes
+            col = col + total_genes - 1
         else:
             col -= 1
         
