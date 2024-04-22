@@ -1,6 +1,8 @@
 import pygame
 import random
 import genetica
+import caminos
+import time
 
 # Inicialización de pygame
 
@@ -13,10 +15,10 @@ RED = (255, 0, 0)
 # Definición del tamaño de la pantalla y otros parámetros
 WIDTH, HEIGHT = 50, 50
 SCREEN_SIZE = (WIDTH * 10 + 100, HEIGHT * 10)  # Aumentamos el ancho de la pantalla para mostrar la salud
-SPECIAL_CELL_COUNT = 5
-SPECIAL_CELL_POINTS = 5
+SPECIAL_CELL_COUNT = 1000
+SPECIAL_CELL_POINTS = 1
 
-number_players = 3
+number_players = 100
 genetica.total_players = number_players
 
 # Clase para representar a un jugador
@@ -41,6 +43,7 @@ class Player:
         self.heal_by_damage = heal_by_damage
         self.points_increase = points_increase
         self.is_alive = True
+        self.path = []
 
     def move(self, dx, dy):
         if self.is_alive:
@@ -48,7 +51,22 @@ class Player:
             self.y += dy * self.speed
             self.x = max(0, min(WIDTH - 1, self.x))
             self.y = max(0, min(HEIGHT - 1, self.y))
+            
+            pygame.display.flip()
+        
+            
+    def step(self):
+        match random.randint(0, 40000) % 4:
+            case 0: 
+                self.move(0, -1)
+            case 1: 
+                self.move(0, 1)
+            case 2: 
+                self.move(-1, 0)
+            case 3: 
+                self.move(1, 0) 
 
+            
     def attack_enemy(self, enemy):
         if self.is_alive and enemy.is_alive:
             if random.random() < self.accuracy:
@@ -57,9 +75,8 @@ class Player:
                 self.health = min(self.health, self.max_health)
                 if enemy.health <= 0:
                     enemy.is_alive = False
-            else:
-                print(f"{self.color} missed the attack!")
-
+            # else:
+            #     print(f"{self.color} missed the attack!")
 
 # Inicialización de jugadores
 players_list = []
@@ -70,11 +87,11 @@ for _ in range(number_players):  # Aquí puedes cambiar el número de jugadores
     player = Player(**player_attributes)
     players_list.append(player)
 
-for player in players_list:
-    print("color: ", player.color)
-    print("controles: ", player.controls)
-    print("velocidad: ", player.speed)
-    print('\n')
+# for player in players_list:
+#     print("color: ", player.color)
+#     print("controles: ", player.controls)
+#     print("velocidad: ", player.speed)
+#     print('\n')
 
 
 
@@ -141,8 +158,8 @@ def check_special_cells(player):
         if (player.x, player.y) == cell['position']:
             if player.is_alive:
                 player.score += player.points_increase
-                cell['points'] -= 1
-                if cell['points'] == 0:
+                cell['points'] -= player.velocity_recolection
+                if cell['points'] <= 0:
                     special_cells.remove(cell)
                     
 # Función principal del juego
@@ -159,8 +176,13 @@ def main():
         handle_events()
 
         check_collisions()
-
+        
+        
+        
+        
+        # while special_cells:
         for player in players_list:
+            player.step()
             check_special_cells(player)
         
         for player in players_list:
@@ -176,7 +198,7 @@ def main():
 
         # Verificar si ya no quedan celdas especiales
         if not special_cells:
-            # running = False
+            time.sleep(3)
             datos = genetica.round_genetica(players_list)
             for i in range(0, len(players_list)):     
                 players_list[i].redColor = datos[i][0]
@@ -192,38 +214,16 @@ def main():
                 players_list[i].heal_by_damage = datos[i][9]
                 players_list[i].points_increase = datos[i][10]
                 
-            casillas_especiales()
-
-    
-    
+            casillas_especiales() 
+            for player in players_list:
+                player.path = caminos.get_path(special_cells, player)
 
     pygame.quit()
     
 
 
 if __name__ == "__main__":
-     main()
+    for player in players_list:
+        player.path = caminos.get_path(special_cells, player)
+    main()
 
-#
-#
-#
-#
-#
-#
-# !!!!! IMPORTANTE 
-# Ajustar la ventana para que se repita cuando se acaban los objetivos -----
-
-# while len(players_list) > 0:
-#     main()        
-    
-#     pygame.init()
-#     players_list.pop()
-    
-#     genetica.round(players_list)
-    
-#     for player in players_list:
-#         player.is_alive = True
-    
-# pygame.quit()
-
-#genetica.round_genetica(players_list)
