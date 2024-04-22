@@ -26,7 +26,7 @@ genes = [(0, 255), (0, 255), (0, 255), (1, 10), (10, 50), (0, 100), (0, 100), (1
 total_players = 0
 total_genes = len(genes) 
 round_value = 6
-total_changes = math.floor(0.1 * total_genes * total_players)
+total_changes = 0
 
 def personajeInicial():
     
@@ -46,7 +46,7 @@ def personajeInicial():
         'evasion': 0.1,
         'accuracy': 0.8,
         'health_regeneration': 2,
-        'velocity_recolection': 1,
+        'velocity_recolection': 3,
         'heal_by_damage': 2,
         'points_increase': 2
     }
@@ -69,7 +69,7 @@ def round_genetica(players_list):
     cut_crossover = []
     positions = []
     
-    cut_crossover_function(cut_crossover, positions, len(new_players_list))
+    cut_crossover_function(cut_crossover, positions, new_players_list)
     
     old_positions = positions.copy()
     if len(positions) > 0:
@@ -148,10 +148,10 @@ def reorderes_players_function(total_players, cumulative, players):
     
     return reordered_players
 
-def cut_crossover_function(cut_crossover, positions, total_players):
+def cut_crossover_function(cut_crossover, positions, players):
     random_numbers = []
-    for _ in range(1, total_players):
-        random_numbers.append( random.randint(1, 999) / 1000 )
+    for player in players:
+        random_numbers.append( (random.randint(1, 100) / 1000 ) * player[3]) # speed
     
     for rand in random_numbers:
         if rand <= 0.250:
@@ -170,23 +170,29 @@ def crossed_players_function(crossed_players, positions, cut_crossover, old_posi
             elif position - 1 < len(reordered_players):
                 new_player.append( reordered_players[position - 1][i])
             
-        #if old_positions[j] - 1 < len(crossed_players):
-        crossed_players[old_positions[j] - 1] = new_player
+        crossed_players[old_positions[j]] = new_player
         j += 1
 
 def replace_function(replace_positions, replace_values):
+    total_changes = math.floor(0.1 * total_genes * total_players)
     for _ in range(0, total_changes):
         position = random.randint(0, total_genes * total_players)
         replace_positions.append(position)
         
         value = 0
-        match position % total_genes:
-            case 0, 1, 2: value = random.randint(0, 255)
-            case 3: value = random.randint(1, 10)
-            case 4: value = random.randint(10, 50)
-            case 5, 6: value = random.randint(1, 99) / 100
-            case 7: value = random.randint(1, 10)
-            case 8, 9, 10: value = random.randint(1, 5)
+        match (position % total_genes):
+            case 0 | 1 | 2: 
+                value = random.randint(0, 255)
+            case 3: 
+                value = random.randint(1, 10)
+            case 4: 
+                value = random.randint(10, 50)
+            case 5 | 6: 
+                value = random.randint(1, 99) / 100
+            case 7: 
+                value = random.randint(1, 10)
+            case 8 | 9 | 10: 
+                value = random.randint(1, 5)
         
         replace_values.append(value)
             
@@ -205,7 +211,10 @@ def replace_values_function(replace_positions, replace_values, crossed_players):
         else:
             col -= 1
         
-        crossed_players[ren][col] = value
+        if ren < len(crossed_players) and col < total_genes:
+            crossed_players[ren][col] = value
+        else:
+            print(f" Ren: {ren} --------- Col: {col} ")
 
 
         
